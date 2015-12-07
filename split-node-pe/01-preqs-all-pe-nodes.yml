@@ -1,0 +1,16 @@
+---
+- hosts: pe-nodes
+  sudo: yes
+  tasks:
+  - name: upgrade all packages
+    yum: name=* state=latest
+  - name: Add wgetrc to /etc/
+    copy: src=../files/wgetrc dest=/etc/wgetrc owner=root group=root mode=0644
+  - name: Add proxy.sh to /etc/profile.d
+    copy: src=../files/proxy.sh dest=/etc/profile.d/proxy.sh owner=root group=root mode=0755
+  - name: install iptables-services
+    yum: name=iptables-services state=latest
+  - name: disable and stop firewalld
+    service: name=firewalld enabled=no state=stopped
+  - name: enable and start iptables
+    service: name=iptables enabled=yes state=started

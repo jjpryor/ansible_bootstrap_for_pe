@@ -1,0 +1,13 @@
+[console]
+consolenode.yourorg.local
+
+[master]
+masternode.yourorg.local
+
+[pdb]
+puppetdbnode.yourorg.local
+
+[pe-nodes]
+masternode.yourorg.local
+consolenode.yourorg.local
+puppetdbnode.yourorg.local

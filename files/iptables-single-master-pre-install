@@ -1,0 +1,20 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [1:88]
+-A INPUT  -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p icmp  -j ACCEPT
+-A INPUT -i lo  -j ACCEPT
+-A INPUT -d 127.0.0.0/8 ! -i lo  -j REJECT --reject-with icmp-port-unreachable
+-A INPUT -p tcp -m multiport --dports 22  -j ACCEPT
+# 3000 is for the installer only and is temporary
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 3000 -j ACCEPT
+# 443 is for PE Console web access
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT
+# 8140 is for Puppet agents to talk to Puppet Master
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 8140 -j ACCEPT
+# 61613 is for Mcollective agents to talk to Puppet Master
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 61613 -j ACCEPT
+-A INPUT -m limit --limit 30/min -j LOG --log-prefix "IPTables-dropped: "
+-A INPUT  -j DROP
+COMMIT

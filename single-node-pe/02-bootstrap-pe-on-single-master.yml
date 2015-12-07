@@ -1,0 +1,17 @@
+---
+- hosts: pe-node
+  sudo: yes
+  tasks:
+  - name: Creates directory /root/pe
+    file: path=/root/pe state=directory
+  - name: Copy PE 2015.2.3 tarball to /root/pe
+    copy: src=../files/puppet-enterprise-2015.2.3-el-7-x86_64.tar.gz dest=/root/pe owner=root group=root mode=0600
+  - name: Copy Puppet Labs Release GPG key to /root/pe
+    copy: src=../files/PuppetLabsRelease-gpg.key dest=/root owner=root group=root mode=0600
+  - name: Copy PE 2015.2.3 tarball GPG signature to /root/pe
+    copy: src=../files/puppet-enterprise-2015.2.3-el-7-x86_64.tar.gz.asc dest=/root/pe owner=root group=root mode=0600
+  - name: Add GPG key to keyring
+    shell: /usr/bin/gpg --import /root/PuppetLabsRelease-gpg.key
+  - name: Verify the signature
+    shell: /usr/bin/gpg --verify /root/pe/puppet-enterprise-2015.2.3-el-7-x86_64.tar.gz.asc
+    register: gpgoutput

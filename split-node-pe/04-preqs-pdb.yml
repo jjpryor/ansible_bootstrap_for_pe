@@ -1,0 +1,29 @@
+---
+- hosts: pdb
+  sudo: yes
+  tasks:
+  - name: Collect /var free space on target system
+    action: shell df -P /var | awk 'END { print $4 }'
+    register: varsize
+    changed_when: no
+  - name: Safeguard - Check if /var is at least 42G to continue
+    action: fail msg="Not enough free space on filesystem /var (got {{varsize.stdout|int/1024/1024|int}}G, need at least 42G)"
+    when: varsize.stdout|int < 42 * 1024 * 1024
+  - name: Collect /opt free space on target system
+    action: shell df -P /opt | awk 'END { print $4 }'
+    register: optsize
+    changed_when: no
+  - name: Safeguard - Check if /opt is at least 100G to continue
+    action: fail msg="Not enough free space on filesystem /opt (got {{optsize.stdout|int/1024/1024|int}}G, need at least 100G)"
+    when: optsize.stdout|int < 100 * 1024 * 1024
+  - name: Collect /tmp free space on target system
+    action: shell df -P /tmp | awk 'END { print $4 }'
+    register: tmpsize
+    changed_when: no
+  - name: Safeguard - Check if /tmp is at least 4G to continue
+    action: fail msg="Not enough free space on filesystem /tmp (got {{optsize.stdout|int/1024/1024|int}}G, need at least 4G)"
+    when: tmpsize.stdout|int < 4 * 1024 * 1024
+  - name: Copy new iptables which opens ports for PuppetDB
+    copy: src=../files/iptables-pdb dest=/etc/sysconfig/iptables owner=root group=root mode=0600
+  - name: restart iptables
+    service: name=iptables enabled=yes state=restarted

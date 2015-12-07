@@ -1,0 +1,12 @@
+---
+- hosts: pe-node
+  sudo: yes
+  tasks:
+  - name: Copy PE license.key file to /etc/puppetlabs
+    copy: src=../files/license.key dest=/etc/puppetlabs owner=pe-puppet group=root mode=0644
+  - name: Verify License File
+    shell: /opt/puppetlabs/bin/puppet license
+  - name: Copy new iptables which opens ports for PE Master Post Install
+    copy: src=../files/iptables-single-master-post-install dest=/etc/sysconfig/iptables owner=root group=root mode=0600
+  - name: restart iptables
+    service: name=iptables enabled=yes state=restarted

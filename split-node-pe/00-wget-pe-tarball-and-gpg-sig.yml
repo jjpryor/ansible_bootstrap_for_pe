@@ -1,0 +1,8 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  tasks:
+  - name: Get PE 2015.2.3 tarball from Puppet Labs
+    shell: wget -O ../files/puppet-enterprise-2015.2.3-el-7-x86_64.tar.gz 'https://s3.amazonaws.com/pe-builds/released/2015.2.3/puppet-enterprise-2015.2.3-el-7-x86_64.tar.gz'
+  - name: Get PE 2015.2.3 tarball's GPG signature from Puppet Labs
+    shell: wget -O ../files/puppet-enterprise-2015.2.3-el-7-x86_64.tar.gz.asc 'https://s3.amazonaws.com/pe-builds/released/2015.2.3/puppet-enterprise-2015.2.3-el-7-x86_64.tar.gz.asc'
